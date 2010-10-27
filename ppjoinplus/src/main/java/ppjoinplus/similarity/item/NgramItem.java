@@ -5,8 +5,8 @@ import java.util.List;
 import ppjoinplus.similarity.parser.NgramParser;
 
 public class NgramItem extends Item {
-	private String[] ngram;
-	private String origin;
+	protected String[] ngram;
+	protected String origin;
 
 	public NgramItem(Object id, String origin, int ngram, NgramParser parser){
 		super();
@@ -48,4 +48,6 @@ public class NgramItem extends Item {
 	public String get(int pos){
 		return this.ngram[pos];
 	}
+	
+	
 }
