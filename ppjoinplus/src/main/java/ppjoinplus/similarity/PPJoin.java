@@ -25,10 +25,6 @@ public class PPJoin {
 	 * しきい値。1.0 >= threshold > 0.0
 	 */
 	private double threshold = 0.9;
-	/**
-	 * SuffixFilterの再帰回数上限
-	 */
-	private int maxdepth = 3;
 	
 	/**
 	 * PPJoin+アルゴリズムとして動作させるかどうかのフラグ。
@@ -123,6 +119,8 @@ public class PPJoin {
 		//p ← |x| − (t · |x|) + 1;
 		int p = (int)(xlen - Math.ceil(threshold * xlen) + 1);
 
+		int debugThrowPrefixPositionCounter = 0;
+		int debugThrowSuffixFilteringCounter = 0;
 		for(int dist = 0 ; dist < dataset.size() ; dist++){
 			Item iy = dataset.get(dist);
 			if(ix.getId().equals(iy.getId()))
@@ -139,8 +137,8 @@ public class PPJoin {
 
 			//seek prefix position
 			int prefixI = -1, prefixJ = -1;
-			for(int i = 0 ; i < p ; i++){
-				for(int j = 0 ; j < p ; j++){
+			for(int i = 0 ; i < p && i < xlen ; i++){
+				for(int j = 0 ; j < p && j < ylen; j++){
 					//ubound ← 1 + min(|x| − i, |y| − j);
 					int ubound = 1 + Math.min(xlen - i, ylen - j);
 					if(ubound < a){
@@ -156,12 +154,16 @@ public class PPJoin {
 				if((prefixI > -1 && prefixJ > -1))
 					break;
 			}
-			log.debug("seek prefix position:" + 
-					ix.toString() + "\t" + 
-					iy.toString() + "\t" + 
-					prefixI + "\t" + 
-					prefixJ + "\t" + 
-					((prefixI <= -1 || prefixJ <= -1)));
+			if(log.isDebugEnabled()){
+				log.debug("seek prefix position:" + 
+						ix.toString() + "\t" + 
+						iy.toString() + "\t" + 
+						prefixI + "\t" + 
+						prefixJ + "\t" + 
+						(!(prefixI <= -1 || prefixJ <= -1)));
+				if(!(prefixI <= -1 || prefixJ <= -1))
+					debugThrowPrefixPositionCounter++;
+			}
 			if((prefixI <= -1 || prefixJ <= -1))
 				continue;
 			
@@ -179,12 +181,16 @@ public class PPJoin {
 				}else{
 					h = suffixFilter.filter(ix, iy, 0, 0, ix.length(), iy.length(), hmax, 1);
 				}
-				log.debug("suffix filtering:" + 
-						ix.toString() + "\t" + 
-						iy.toString() + "\t" + 
-						hmax + "\t" + 
-						h + "\t" + 
-						((h < hmax)));
+				if(log.isDebugEnabled()){
+					log.debug("suffix filtering:" + 
+							ix.toString() + "\t" + 
+							iy.toString() + "\t" + 
+							hmax + "\t" + 
+							h + "\t" + 
+							(!(h < hmax)));
+					if(!(h < hmax))
+						debugThrowSuffixFilteringCounter++;
+				}
 				if(h < hmax)
 					continue;
 			}
@@ -193,6 +199,10 @@ public class PPJoin {
 			if(verifier.verify(ix, iy, prefixI, prefixJ, a)){
 				result.add(iy);
 			}
+		}
+		if(log.isDebugEnabled()){
+			log.debug("throw prefix position : " + debugThrowPrefixPositionCounter);
+			log.debug("throw suffix filtering : " + debugThrowSuffixFilteringCounter);
 		}
 		
 		return result;
@@ -213,14 +223,6 @@ public class PPJoin {
 
 	public void setPpjoinplus(boolean ppjoinplus) {
 		this.ppjoinplus = ppjoinplus;
-	}
-
-	public int getMaxdepth() {
-		return maxdepth;
-	}
-
-	public void setMaxdepth(int maxdepth) {
-		this.maxdepth = maxdepth;
 	}
 
 	public Verifier getVerifier() {

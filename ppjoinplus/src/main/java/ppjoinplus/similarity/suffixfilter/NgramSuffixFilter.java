@@ -6,7 +6,8 @@ import ppjoinplus.similarity.item.Item;
 import ppjoinplus.similarity.item.NgramItem;
 
 public class NgramSuffixFilter extends SuffixFilter {
-	private int maxdepth ;
+	private static final int MINIMUM_MAXDEPTH = 3;
+	private int maxdepth = MINIMUM_MAXDEPTH;
 	
 	public NgramSuffixFilter(){
 		super();
@@ -14,6 +15,8 @@ public class NgramSuffixFilter extends SuffixFilter {
 	
 	public NgramSuffixFilter(int maxdepth){
 		this();
+		if(maxdepth < MINIMUM_MAXDEPTH)
+			throw new IllegalArgumentException("maxdepth >= " + MINIMUM_MAXDEPTH + " : " + maxdepth);
 		this.maxdepth = maxdepth;
 	}
 
@@ -38,7 +41,7 @@ public class NgramSuffixFilter extends SuffixFilter {
 	 * @return
 	 */
 	private double suffixFilter(String[] wx, String[] wy, double hmax, int depth) {
-		if(depth >= maxdepth)
+		if(depth > maxdepth)
 			return Math.abs(wx.length - wy.length);
 		int xlen = wx.length;
 		int ylen = wy.length;
@@ -64,7 +67,7 @@ public class NgramSuffixFilter extends SuffixFilter {
 					xpr >= wx.length ? wx.length - 1 : xpr);
 		int diff = xp.getDiff() > 0 ||  yp.getDiff() > 0 ? 1 : 0 ;
 		
-		if(yp.getW() == 0  || xp.getW() == 0)
+		if(yp.getF() == 0  || xp.getF() == 0)
 			return hmax + 1;
 		
 		//examination
@@ -142,17 +145,17 @@ public class NgramSuffixFilter extends SuffixFilter {
 	public class Partition{
 		private String[] sl;
 		private String[] sr;
-		private int w;
+		private int f;
 		private int diff;
 		
 		public Partition(){
 			super();
 		}
 		
-		public Partition(String[] sl, String[] sr, int w, int diff){
+		public Partition(String[] sl, String[] sr, int f, int diff){
 			this.sl = sl;
 			this.sr = sr;
-			this.w = w;
+			this.f = f;
 			this.diff = diff;
 		}
 
@@ -172,11 +175,11 @@ public class NgramSuffixFilter extends SuffixFilter {
 			this.sr = sr;
 		}
 
-		public int getW() {
-			return w;
+		public int getF() {
+			return f;
 		}
-		public void setW(int w) {
-			this.w = w;
+		public void setF(int f) {
+			this.f = f;
 		}
 		public int getDiff() {
 			return diff;
@@ -187,7 +190,7 @@ public class NgramSuffixFilter extends SuffixFilter {
 		
 		@Override
 		public String toString(){
-			return this.sl.toString() + "\n" + sr.toString() + "\n" + w + "\n" + diff;
+			return this.sl.length + "\n" + sr.length + "\n" + f + "\n" + diff;
 		}
 		
 	}
