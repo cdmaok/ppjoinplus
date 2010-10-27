@@ -36,19 +36,20 @@ public class NgramVerifier implements Verifier {
 	public boolean verify(Item itemx, Item itemy, int i, int j, double a) {
 		NgramItem ix = (NgramItem)itemx;
 		NgramItem iy = (NgramItem)itemy;
-		boolean isSimilar = false;
+		double score = 0.0;
 		if(i < j){
 			int ubound = ix.length() - i;
 			if(ubound >= a){
-				isSimilar = metrics.getSimilarity(ix.getOrigin(), iy.getOrigin()) >= threshold;
+				score = metrics.getSimilarity(ix.getOrigin(), iy.getOrigin());
 			}
 		}else{
 			int ubound = iy.length() - j;
 			if(ubound >= a){
-				isSimilar = metrics.getSimilarity(ix.getOrigin(), iy.getOrigin()) >= threshold;
+				score = metrics.getSimilarity(ix.getOrigin(), iy.getOrigin());
 			}
 		}
-		return isSimilar;
+		
+		return score >= threshold;
 	}
 
 	public double getThreshold() {
