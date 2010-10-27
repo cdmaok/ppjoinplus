@@ -33,7 +33,7 @@ public class NgramPPJoinTest {
 	private String[] testFiles = {
 			"src/test/java/ascii_test.txt", 
 			"src/test/java/string_test.txt", 
-			"src/test/java/sada.txt", 
+//			"src/test/java/sada.txt", 
 //			"src/test/java/data100.txt"
 		};
 	private double[] thresholds = {0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1};
@@ -55,7 +55,8 @@ public class NgramPPJoinTest {
 						new Levenshtein(), 
 						new JaroWinkler(), 
 						new JaccardSimilarity(new CharacterNgramTokenizer(ngram, new CharacterNgramParser())),
-						new CosineSimilarity(new CharacterNgramTokenizer(ngram, new CharacterNgramParser()))}){
+						new CosineSimilarity(new CharacterNgramTokenizer(ngram, new CharacterNgramParser()))
+						}){
 					NgramParser parser = new CharacterNgramParser();
 					List<Item> items = new ArrayList<Item>();
 					int count = 1;
@@ -82,6 +83,7 @@ public class NgramPPJoinTest {
 							log.info("----- \tmetrics : " + metrics.getClass().getName());
 							log.info("----- \tdata file : " + file);
 							log.info("----- \tdataset size : " + String.valueOf(items.size()));
+							log.info("----- \tngram : " + String.valueOf(ngram));
 							log.info("----- \tthreshold : " + String.valueOf(threshold));
 							log.info("----- \tppjoinplus : " + String.valueOf(ppjoinplus));
 						

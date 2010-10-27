@@ -119,8 +119,8 @@ public class PPJoin {
 		//p ← |x| − (t · |x|) + 1;
 		int p = (int)(xlen - Math.ceil(threshold * xlen) + 1);
 
-		int debugThrowPrefixPositionCounter = 0;
-		int debugThrowSuffixFilteringCounter = 0;
+		int debugThrowPrefixPositionCounter = 0;//for debug
+		int debugThrowSuffixFilteringCounter = 0;//for debug
 		for(int dist = 0 ; dist < dataset.size() ; dist++){
 			Item iy = dataset.get(dist);
 			if(ix.getId().equals(iy.getId()))
