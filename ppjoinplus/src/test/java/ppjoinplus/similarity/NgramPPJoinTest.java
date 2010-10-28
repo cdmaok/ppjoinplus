@@ -34,9 +34,7 @@ public class NgramPPJoinTest {
 	private String[] testFiles = {
 			"src/test/java/ascii_test.txt", 
 			"src/test/java/string_test.txt", 
-			"src/test/java/sada.txt", 
-			"src/test/java/data100.txt",
-//			"src/test/java/data1000.txt",
+//			"src/test/java/sada.txt", 
 		};
 	private double[] thresholds = {0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1};
 	private int[] ngrams = {1,2,3};
